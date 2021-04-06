@@ -1,0 +1,18 @@
+apiVersion: v1
+entries:
+  wasp-service-template:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2021-04-06T09:21:37.780347392Z"
+    description: A Helm chart for wasp-service-template
+    digest: 04bdba0fc0fede8c2a1f8c10dee07227850f196356ec524a26d0bf52aae57add
+    maintainers:
+    - email: opensource@digicatapult.org.uk
+      name: CDECatapult
+      url: www.digicatapult.org.uk
+    name: wasp-service-template
+    type: application
+    urls:
+    - https://CDECatapult.github.io/wasp-service-template/wasp-service-template-0.0.1.tgz
+    version: 0.0.1
+generated: "2021-04-06T09:21:37.779777389Z"

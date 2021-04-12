@@ -2,6 +2,29 @@ apiVersion: v1
 entries:
   wasp-reading-service:
   - apiVersion: v2
+    appVersion: 0.0.3
+    created: "2021-04-12T09:58:33.300232183Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: ^10.3.9
+    - condition: kafka.enabled
+      name: kafka
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.7.3
+    description: A Helm chart for wasp-reading-service
+    digest: 8fa8d562f369ce0f8fe8aec471b7ac4c6fdec5eb6bd9eaedd46bbe34621fedc3
+    maintainers:
+    - email: opensource@digicatapult.org.uk
+      name: cdecatapult
+      url: www.digicatapult.org.uk
+    name: wasp-reading-service
+    type: application
+    urls:
+    - https://CDECatapult.github.io/wasp-reading-service/wasp-reading-service-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
     appVersion: 0.0.2
     created: "2021-04-08T09:52:27.934644015Z"
     dependencies:
@@ -53,4 +76,4 @@ entries:
     urls:
     - https://CDECatapult.github.io/wasp-reading-service/wasp-service-template-0.0.1.tgz
     version: 0.0.1
-generated: "2021-04-08T09:52:27.923233635Z"
+generated: "2021-04-12T09:58:33.287838056Z"

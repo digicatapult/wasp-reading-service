@@ -16,12 +16,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Check token
-        run: |
-          if [ -z "${{ secrets.GITHUB_TOKEN }}"]; then
-            echo "Must provide a GITHUB_TOKEN secret in order to run release workflow"
-            exit 1
-          fi
       - name: Get repository identifiers
         id: repo_ids
         run: |
@@ -168,6 +162,8 @@ jobs:
         uses: kibertoad/wait-action@1.0.1
         with:
           time: "30s"
+      - name: Initialise DB
+        run: npx knex migrate:latest --env test
       - name: Run tests
         run: npm run test
   check-version:

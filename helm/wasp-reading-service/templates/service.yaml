@@ -1,0 +1,14 @@
+{{- $fullName := include "wasp-reading-service.fullname" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "wasp-reading-service.labels" . | nindent 4 }}
+spec:
+  selector:
+    name: {{ include "wasp-reading-service.fullname" . }}
+  ports:
+    - protocol: 'TCP'
+      port: 80
+      targetPort: {{ .Values.config.port }}

@@ -1,0 +1,131 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wasp-reading-service.fullname" . }}
+  labels:
+    {{- include "wasp-reading-service.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      name: {{ include "wasp-reading-service.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      labels:
+        name: {{ include "wasp-reading-service.fullname" . }}
+    spec:
+      {{- include "wasp-reading-service.imagePullSecrets" . | indent 6 }}
+      initContainers:
+        - name: {{ include "wasp-reading-service.initReadings.name" . }}
+          image: bitnami/kafka:2.7.0-debian-10-r68
+          envFrom:
+            - configMapRef:
+                name: {{ include "wasp-reading-service.fullname" . }}-config
+          command: ['/bin/sh', '-c']
+          args: ['/opt/bitnami/kafka/bin/kafka-topics.sh --create --topic $(kafkaReadingsTopic) --bootstrap-server=$(kafkaBrokers) --partitions $(readingsPartitions) --replication-factor $(readingsReplicationFactor) --if-not-exists']
+        - name: {{ include "wasp-reading-service.initDb.name" . }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          command: ['npx', 'knex', "migrate:latest", "--env", "production"]
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-config
+                  key: dbHost
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-config
+                  key: dbPort
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-config
+                  key: dbName
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-secret
+                  key: dbUsername
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-secret
+                  key: dbPassword
+
+      containers:
+        - name: {{ include "wasp-reading-service.fullname" . }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.config.port }}
+            initialDelaySeconds: 15
+            timeoutSeconds: 3
+            periodSeconds: 5
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-config
+                  key: port
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-config
+                  key: logLevel
+            - name: API_OFFSET_LIMIT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-config
+                  key: apiReadingsLimit
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-config
+                  key: dbHost
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-config
+                  key: dbPort
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-config
+                  key: dbName
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-secret
+                  key: dbUsername
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "wasp-reading-service.fullname" . }}-secret
+                  key: dbPassword
+            - name: KAFKA_BROKERS
+              valueFrom:
+                configMapKeyRef:
+                  name:  {{ include "wasp-reading-service.fullname" . }}-config
+                  key: kafkaBrokers
+            - name: KAFKA_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name:  {{ include "wasp-reading-service.fullname" . }}-config
+                  key: kafkaLogLevel
+            - name: KAFKA_READINGS_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name:  {{ include "wasp-reading-service.fullname" . }}-config
+                  key: kafkaReadingsTopic
+            - name: KAFKA_READINGS_NOTIFICATIONS_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name:  {{ include "wasp-reading-service.fullname" . }}-config
+                  key: kafkaReadingsNotificationsTopic

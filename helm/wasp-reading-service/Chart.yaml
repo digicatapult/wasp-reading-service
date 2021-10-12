@@ -1,0 +1,20 @@
+apiVersion: v2
+name: wasp-reading-service
+appVersion: '0.0.18'
+description: A Helm chart for wasp-reading-service
+version: '0.0.18'
+type: application
+maintainers:
+  - name: digicatapult
+    email: opensource@digicatapult.org.uk
+    url: www.digicatapult.org.uk
+
+dependencies:
+  - name: postgresql
+    version: '^10.12.2'
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: kafka
+    version: '12.7.3'
+    repository: https://charts.bitnami.com/bitnami
+    condition: kafka.enabled

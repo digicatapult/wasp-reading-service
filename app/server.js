@@ -1,7 +1,17 @@
 const express = require('express')
 const pinoHttp = require('pino-http')
-const { PORT } = require('./env')
+const { initialize } = require('express-openapi')
+const compression = require('compression')
+const v1ApiDoc = require('./api-v1/api-doc')
+const swaggerUi = require('swagger-ui-express')
+const bodyParser = require('body-parser')
+const { PORT, API_VERSION, API_MAJOR_VERSION } = require('./env')
 const logger = require('./logger')
+const cors = require('cors')
+const path = require('path')
+const v1ReadingService = require(`./api-${API_MAJOR_VERSION}/services/readingService`)
+
+const setupReadingsConsumer = require('./readingsConsumer')
 
 async function createHttpServer() {
   const app = express()
@@ -13,8 +23,34 @@ async function createHttpServer() {
   })
 
   app.get('/health', async (req, res) => {
-    res.status(200).send({ status: 'ok' })
+    res.status(200).send({ version: API_VERSION, status: 'ok' })
   })
+
+  app.use(cors())
+  app.use(compression())
+  app.use(bodyParser.json())
+
+  initialize({
+    app,
+    apiDoc: v1ApiDoc,
+    dependencies: {
+      readingService: v1ReadingService,
+    },
+    paths: [path.resolve(__dirname, `api-${API_MAJOR_VERSION}/routes`)],
+  })
+
+  const options = {
+    swaggerOptions: {
+      urls: [
+        {
+          url: `http://localhost:${PORT}/${API_MAJOR_VERSION}/api-docs`,
+          name: 'ReadingService',
+        },
+      ],
+    },
+  }
+
+  app.use(`/${API_MAJOR_VERSION}/swagger`, swaggerUi.serve, swaggerUi.setup(null, options))
 
   // Sorry - app.use checks arity
   // eslint-disable-next-line no-unused-vars
@@ -27,16 +63,20 @@ async function createHttpServer() {
     }
   })
 
-  return { app }
+  const readingsConsumer = await setupReadingsConsumer()
+
+  return { app, readingsConsumer }
 }
 
 /* istanbul ignore next */
 async function startServer() {
   try {
-    const { app } = await createHttpServer()
+    const { app, readingsConsumer } = await createHttpServer()
 
     const setupGracefulExit = ({ sigName, server, exitCode }) => {
       process.on(sigName, async () => {
+        await readingsConsumer.disconnect()
+
         server.close(() => {
           process.exit(exitCode)
         })

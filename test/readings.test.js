@@ -1,10 +1,12 @@
-const { describe, before, it } = require('mocha')
-const { expect } = require('chai')
-const moment = require('moment')
-const { setupServer } = require('./helpers/server')
-const { setupDb } = require('./helpers/db')
-const { API_MAJOR_VERSION, API_OFFSET_LIMIT } = require('../app/env')
-const { createReadings, insertReadings, deleteReadings } = require('./helpers/readings')
+import { describe, before, it } from 'mocha'
+import { expect } from 'chai'
+import moment from 'moment'
+import { setupServer } from './helpers/server.js'
+import { setupDb } from './helpers/db.js'
+import env from '../app/env.js'
+import { createReadings, insertReadings, deleteReadings } from './helpers/readings.js'
+
+const { API_OFFSET_LIMIT } = env
 
 describe('Readings', function () {
   const context = {}
@@ -35,7 +37,7 @@ describe('Readings', function () {
 
     it(`should return 400 (invalid thingId)`, async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-0000000000/dataset/${datasetId}/reading`
+        `/v1/thing/000a0000-a00a-00a0-a000-0000000000/dataset/${datasetId}/reading`
       )
 
       expect(context.response.status).to.equal(400)
@@ -44,7 +46,7 @@ describe('Readings', function () {
 
     it(`should return 400 (invalid datasetId)`, async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/000a0000-a00a-00a0-a000-0000000000/reading`
+        `/v1/thing/${thingId}/dataset/000a0000-a00a-00a0-a000-0000000000/reading`
       )
 
       expect(context.response.status).to.equal(400)
@@ -53,7 +55,7 @@ describe('Readings', function () {
 
     it(`should return 404 (invalid datasetId for thingId)`, async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-000000000000/dataset/${datasetId}/reading`
+        `/v1/thing/000a0000-a00a-00a0-a000-000000000000/dataset/${datasetId}/reading`
       )
 
       expect(context.response.status).to.equal(404)
@@ -70,9 +72,7 @@ describe('Readings', function () {
     })
 
     it(`should return 200 (length = ${API_OFFSET_LIMIT}) with implicit default limit = ${API_OFFSET_LIMIT}`, async function () {
-      context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading`
-      )
+      context.response = await context.request.get(`/v1/thing/${thingId}/dataset/${datasetId}/reading`)
 
       expect(context.response.status).to.equal(200)
       expect(context.response.body).to.have.length(API_OFFSET_LIMIT)
@@ -81,7 +81,7 @@ describe('Readings', function () {
     it(`should return 200 (length = ${3}) with default limit, offset = ${API_OFFSET_LIMIT - 1}`, async function () {
       let offset = API_OFFSET_LIMIT - 1
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading/?offset=${offset}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading/?offset=${offset}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -92,7 +92,7 @@ describe('Readings', function () {
       API_OFFSET_LIMIT - 1
     }`, async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading?limit=${API_OFFSET_LIMIT - 1}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading?limit=${API_OFFSET_LIMIT - 1}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -102,7 +102,7 @@ describe('Readings', function () {
     const invalidParamsTest = ({ limit = API_OFFSET_LIMIT, offset = 0 }) => {
       it(`should return 200 (length = ${API_OFFSET_LIMIT}) with explicit limit = ${limit}, offset = ${offset}`, async function () {
         context.response = await context.request.get(
-          `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading?limit=${limit}&offset=${offset}`
+          `/v1/thing/${thingId}/dataset/${datasetId}/reading?limit=${limit}&offset=${offset}`
         )
 
         expect(context.response.status).to.equal(200)
@@ -134,9 +134,7 @@ describe('Readings', function () {
     })
 
     it('should return 200 with implicit default ASC timestamp sorting', async function () {
-      context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading`
-      )
+      context.response = await context.request.get(`/v1/thing/${thingId}/dataset/${datasetId}/reading`)
 
       expect(context.response.status).to.equal(200)
       expect(context.response.body).to.have.length(readings.length)
@@ -150,7 +148,7 @@ describe('Readings', function () {
       const sortByTimestamp = 'asc'
 
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading?sortByTimestamp=${sortByTimestamp}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading?sortByTimestamp=${sortByTimestamp}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -165,7 +163,7 @@ describe('Readings', function () {
       const sortByTimestamp = 'desc'
 
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading?sortByTimestamp=${sortByTimestamp}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading?sortByTimestamp=${sortByTimestamp}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -180,7 +178,7 @@ describe('Readings', function () {
       const sortByTimestamp = 'INVALID'
 
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading?sortByTimestamp=${sortByTimestamp}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading?sortByTimestamp=${sortByTimestamp}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -208,7 +206,7 @@ describe('Readings', function () {
 
     it(`should return 200 within date range`, async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading?startDate=${startDate}&endDate=${endDate}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading?startDate=${startDate}&endDate=${endDate}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -217,7 +215,7 @@ describe('Readings', function () {
 
     it(`should return 200 within invalid date range`, async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading?startDate=${null}&endDate=${null}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading?startDate=${null}&endDate=${null}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -229,7 +227,7 @@ describe('Readings', function () {
       const endDateS = endDate.format('YYYYMMDDTHHmmss,SSS')
 
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading?startDate=${startDateS}&endDate=${endDateS}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading?startDate=${startDateS}&endDate=${endDateS}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -253,7 +251,7 @@ describe('Readings', function () {
 
     it(`should return 200 within date range`, async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading_count?startDate=${startDate}&endDate=${endDate}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading_count?startDate=${startDate}&endDate=${endDate}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -262,7 +260,7 @@ describe('Readings', function () {
 
     it(`should return 200 within invalid date range`, async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading_count?startDate=${null}&endDate=${null}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading_count?startDate=${null}&endDate=${null}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -274,7 +272,7 @@ describe('Readings', function () {
       const endDateS = endDate.format('YYYYMMDDTHHmmss,SSS')
 
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading_count?startDate=${startDateS}&endDate=${endDateS}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading_count?startDate=${startDateS}&endDate=${endDateS}`
       )
 
       expect(context.response.status).to.equal(200)
@@ -286,7 +284,7 @@ describe('Readings', function () {
       const endDateS = moment('19900102T000000,000Z', 'YYYYMMDDTHHmmss,SSS')
 
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}/reading_count?startDate=${startDateS}&endDate=${endDateS}`
+        `/v1/thing/${thingId}/dataset/${datasetId}/reading_count?startDate=${startDateS}&endDate=${endDateS}`
       )
 
       expect(context.response.status).to.equal(200)

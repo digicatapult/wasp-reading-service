@@ -1,6 +1,8 @@
-const delay = require('delay')
-const { KAFKA_READINGS_TOPIC } = require('../../app/env')
-const { getProducer } = require('./kafka')
+import delay from 'delay'
+import env from '../../app/env.js'
+import { getProducer } from './kafka.js'
+
+const { KAFKA_READINGS_TOPIC } = env
 
 const getReadings = (context) => context.db('readings')
 
@@ -78,10 +80,4 @@ const deleteReadings = async ({ context, datasetId }) => {
   await context.db('datasets').decrement('reading_count', deleted.length).where({ id: datasetId })
 }
 
-module.exports = {
-  getReadings,
-  publishReadingAndWait,
-  createReadings,
-  insertReadings,
-  deleteReadings,
-}
+export { getReadings, publishReadingAndWait, createReadings, insertReadings, deleteReadings }

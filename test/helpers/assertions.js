@@ -1,4 +1,4 @@
-const { expect } = require('chai')
+import { expect } from 'chai'
 
 const assertDataset = (result, expectation) => {
   expect(result.type).to.equal(expectation.type)
@@ -27,9 +27,4 @@ const assertReadings = (result, expectation) => {
   }
 }
 
-module.exports = {
-  assertDataset,
-  assertDatasets,
-  assertReading,
-  assertReadings,
-}
+export { assertDataset, assertDatasets, assertReading, assertReadings }

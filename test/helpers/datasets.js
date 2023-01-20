@@ -37,9 +37,4 @@ const createDatasets = ({ thingId, total }) => {
   return datasets
 }
 
-module.exports = {
-  getDatasets,
-  createDataset,
-  createDatasets,
-  addDataset,
-}
+export { getDatasets, createDataset, createDatasets, addDataset }

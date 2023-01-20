@@ -1,17 +1,21 @@
-const { Kafka, logLevel: kafkaLogLevels } = require('kafkajs')
+import { Kafka, logLevel as kafkaLogLevels } from 'kafkajs'
 
-const { assertDataset, addReading } = require('./db')
-const logger = require('./logger')
-const { KAFKA_BROKERS, KAFKA_LOG_LEVEL, KAFKA_READINGS_TOPIC, KAFKA_READINGS_NOTIFICATIONS_TOPIC } = require('./env')
+import { assertDataset, addReading } from './db.js'
+import logger from './logger.js'
+import env from './env.js'
+
+const { KAFKA_BROKERS, KAFKA_LOG_LEVEL, KAFKA_READINGS_TOPIC, KAFKA_READINGS_NOTIFICATIONS_TOPIC } = env
 
 const setupReadingsConsumer = async () => {
   const kafkaLogger = logger.child({ module: 'kafkajs-readings', level: 'error' })
-  const logCreator = () => ({ label, log }) => {
-    const { message } = log
-    kafkaLogger[label.toLowerCase()]({
-      message,
-    })
-  }
+  const logCreator =
+    () =>
+    ({ label, log }) => {
+      const { message } = log
+      kafkaLogger[label.toLowerCase()]({
+        message,
+      })
+    }
 
   const kafka = new Kafka({
     clientId: 'reading-service-readings', // TODO: this should be particular to this packet-forwarder
@@ -72,4 +76,4 @@ const setupReadingsConsumer = async () => {
   }
 }
 
-module.exports = setupReadingsConsumer
+export default setupReadingsConsumer

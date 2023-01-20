@@ -1,8 +1,10 @@
-const { before, after } = require('mocha')
-const { Kafka, logLevel: kafkaLogLevels } = require('kafkajs')
-const delay = require('delay')
+import { before, after } from 'mocha'
+import { Kafka, logLevel as kafkaLogLevels } from 'kafkajs'
+import delay from 'delay'
 
-const { KAFKA_BROKERS, KAFKA_READINGS_NOTIFICATIONS_TOPIC } = require('../../app/env')
+import env from '../../app/env.js'
+
+const { KAFKA_BROKERS, KAFKA_READINGS_NOTIFICATIONS_TOPIC } = env
 
 let producer = null,
   consumer = null
@@ -74,8 +76,4 @@ const getConsumer = () => {
   }
 }
 
-module.exports = {
-  setupKafka,
-  getProducer,
-  getConsumer,
-}
+export { setupKafka, getProducer, getConsumer }

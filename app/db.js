@@ -1,5 +1,5 @@
-const knex = require('knex')
-const env = require('./env')
+import knex from 'knex'
+import env from './env.js'
 
 const client = knex({
   client: 'pg',
@@ -102,7 +102,7 @@ const getReadingsCount = ({ id, startDate, endDate }) => {
   return query
 }
 
-module.exports = {
+export {
   client,
   assertDataset,
   addReading,

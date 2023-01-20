@@ -1,10 +1,9 @@
-const { describe, before, it } = require('mocha')
-const { expect } = require('chai')
-const delay = require('delay')
-const { setupServer } = require('./helpers/server')
-const { setupDb } = require('./helpers/db')
-const { API_MAJOR_VERSION } = require('../app/env')
-const { createDataset, createDatasets, addDataset } = require('./helpers/datasets')
+import { describe, before, it } from 'mocha'
+import { expect } from 'chai'
+import delay from 'delay'
+import { setupServer } from './helpers/server.js'
+import { setupDb } from './helpers/db.js'
+import { createDataset, createDatasets, addDataset } from './helpers/datasets.js'
 
 describe('Datasets', function () {
   const context = {}
@@ -34,25 +33,21 @@ describe('Datasets', function () {
     })
 
     it('should return 400', async function () {
-      context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-0000000000/dataset`
-      )
+      context.response = await context.request.get(`/v1/thing/000a0000-a00a-00a0-a000-0000000000/dataset`)
 
       expect(context.response.status).to.equal(400)
       expect(context.response.body).to.deep.equal([])
     })
 
     it('should return 200 with no results', async function () {
-      context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-000000000000/dataset`
-      )
+      context.response = await context.request.get(`/v1/thing/000a0000-a00a-00a0-a000-000000000000/dataset`)
 
       expect(context.response.status).to.equal(200)
       expect(context.response.body).to.deep.equal([])
     })
 
     it('should return 200 with results', async function () {
-      context.response = await context.request.get(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset`)
+      context.response = await context.request.get(`/v1/thing/${thingId}/dataset`)
 
       expect(context.response.status).to.equal(200)
       expect(context.response.body).to.have.length(datasetsTail)
@@ -70,14 +65,14 @@ describe('Datasets', function () {
     })
 
     it('should return 400 (invalid thingId)', async function () {
-      const { body } = await context.request.get(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset`)
+      const { body } = await context.request.get(`/v1/thing/${thingId}/dataset`)
 
       const updatedDataset = {
         label: 'dataset-zero',
       }
 
       context.response = await context.request
-        .put(`/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-0000000000/dataset/${body[0].id}`)
+        .put(`/v1/thing/000a0000-a00a-00a0-a000-0000000000/dataset/${body[0].id}`)
         .send(updatedDataset)
 
       expect(context.response.status).to.equal(400)
@@ -90,7 +85,7 @@ describe('Datasets', function () {
       }
 
       context.response = await context.request
-        .put(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset/000a0000-a00a-00a0-a000-0000000000`)
+        .put(`/v1/thing/${thingId}/dataset/000a0000-a00a-00a0-a000-0000000000`)
         .send(updatedDataset)
 
       expect(context.response.status).to.equal(400)
@@ -98,19 +93,17 @@ describe('Datasets', function () {
     })
 
     it('should return 400 (invalid body)', async function () {
-      const { body } = await context.request.get(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset`)
+      const { body } = await context.request.get(`/v1/thing/${thingId}/dataset`)
       const updatedDataset = null
 
-      context.response = await context.request
-        .put(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${body[0].id}`)
-        .send(updatedDataset)
+      context.response = await context.request.put(`/v1/thing/${thingId}/dataset/${body[0].id}`).send(updatedDataset)
 
       expect(context.response.status).to.equal(400)
       expect(context.response.body).to.deep.equal({})
     })
 
     it('should return 404 (invalid dataset for thingId)', async function () {
-      const { body } = await context.request.get(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset`)
+      const { body } = await context.request.get(`/v1/thing/${thingId}/dataset`)
 
       const updatedDataset = {
         type: 'dataset-zero',
@@ -119,7 +112,7 @@ describe('Datasets', function () {
       }
 
       context.response = await context.request
-        .put(`/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-000000000000/dataset/${body[0].id}`)
+        .put(`/v1/thing/000a0000-a00a-00a0-a000-000000000000/dataset/${body[0].id}`)
         .send(updatedDataset)
 
       expect(context.response.status).to.equal(404)
@@ -127,7 +120,7 @@ describe('Datasets', function () {
     })
 
     it('should return 200', async function () {
-      const { body } = await context.request.get(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset`)
+      const { body } = await context.request.get(`/v1/thing/${thingId}/dataset`)
 
       const updatedDataset = {
         type: 'dataset-zero',
@@ -135,9 +128,7 @@ describe('Datasets', function () {
         unit: 'datasetUnit-zero',
       }
 
-      context.response = await context.request
-        .put(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${body[0].id}`)
-        .send(updatedDataset)
+      context.response = await context.request.put(`/v1/thing/${thingId}/dataset/${body[0].id}`).send(updatedDataset)
 
       expect(context.response.status).to.equal(200)
       expect(context.response.body.type).to.equal(updatedDataset.type)
@@ -159,7 +150,7 @@ describe('Datasets', function () {
 
     it('should return 400 (invalid thingId)', async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-0000000000/dataset/000a0000-a00a-00a0-a000-0000000000`
+        `/v1/thing/000a0000-a00a-00a0-a000-0000000000/dataset/000a0000-a00a-00a0-a000-0000000000`
       )
 
       expect(context.response.status).to.equal(400)
@@ -168,7 +159,7 @@ describe('Datasets', function () {
 
     it('should return 400 (invalid datasetId)', async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-0000000000/dataset/000a0000-a00a-00a0-a000-0000000000`
+        `/v1/thing/000a0000-a00a-00a0-a000-0000000000/dataset/000a0000-a00a-00a0-a000-0000000000`
       )
 
       expect(context.response.status).to.equal(400)
@@ -177,7 +168,7 @@ describe('Datasets', function () {
 
     it('should return 400 (invalid thingId for datasetId)', async function () {
       context.response = await context.request.get(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-000000000000/dataset/${dataset[0].id}`
+        `/v1/thing/000a0000-a00a-00a0-a000-000000000000/dataset/${dataset[0].id}`
       )
 
       expect(context.response.status).to.equal(404)
@@ -185,7 +176,7 @@ describe('Datasets', function () {
     })
 
     it('should return 200', async function () {
-      context.response = await context.request.get(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${dataset[0].id}`)
+      context.response = await context.request.get(`/v1/thing/${thingId}/dataset/${dataset[0].id}`)
 
       expect(context.response.status).to.equal(200)
       expect(context.response.body.id).to.equal(dataset[0].id)
@@ -210,7 +201,7 @@ describe('Datasets', function () {
 
     it('should return 400 (invalid thingId)', async function () {
       context.response = await context.request.delete(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-0000000000/dataset/${datasetId}`
+        `/v1/thing/000a0000-a00a-00a0-a000-0000000000/dataset/${datasetId}`
       )
 
       expect(context.response.status).to.equal(400)
@@ -219,7 +210,7 @@ describe('Datasets', function () {
 
     it('should return 400 (invalid datasetId)', async function () {
       context.response = await context.request.delete(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-0000000000/dataset/000a0000-a00a-00a0-a000-0000000000`
+        `/v1/thing/000a0000-a00a-00a0-a000-0000000000/dataset/000a0000-a00a-00a0-a000-0000000000`
       )
 
       expect(context.response.status).to.equal(400)
@@ -228,7 +219,7 @@ describe('Datasets', function () {
 
     it('should return 400 (invalid datasetId for thingId)', async function () {
       context.response = await context.request.delete(
-        `/${API_MAJOR_VERSION}/thing/000a0000-a00a-00a0-a000-000000000000/dataset/${datasetId}`
+        `/v1/thing/000a0000-a00a-00a0-a000-000000000000/dataset/${datasetId}`
       )
 
       expect(context.response.status).to.equal(404)
@@ -236,7 +227,7 @@ describe('Datasets', function () {
     })
 
     it('should return 204', async function () {
-      context.response = await context.request.delete(`/${API_MAJOR_VERSION}/thing/${thingId}/dataset/${datasetId}`)
+      context.response = await context.request.delete(`/v1/thing/${thingId}/dataset/${datasetId}`)
 
       expect(context.response.status).to.equal(204)
       expect(context.response.body).to.deep.equal({})

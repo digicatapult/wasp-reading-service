@@ -1,9 +1,12 @@
-const envalid = require('envalid')
-const dotenv = require('dotenv')
-const { version } = require('../package.json')
+import envalid from 'envalid'
+import dotenv from 'dotenv'
+
+import { version } from './version.js'
 
 if (process.env.NODE_ENV === 'test') {
   dotenv.config({ path: 'test/test.env' })
+} else {
+  dotenv.config()
 }
 
 const vars = envalid.cleanEnv(
@@ -19,7 +22,6 @@ const vars = envalid.cleanEnv(
     DB_USERNAME: envalid.str({ devDefault: 'postgres' }),
     DB_PASSWORD: envalid.str({ devDefault: 'postgres' }),
     API_VERSION: envalid.str({ default: version }),
-    API_MAJOR_VERSION: envalid.str({ default: 'v1' }),
     API_OFFSET_LIMIT: envalid.num({ default: 1000 }),
 
     KAFKA_LOG_LEVEL: envalid.str({
@@ -30,7 +32,7 @@ const vars = envalid.cleanEnv(
       const kafkaSet = new Set(input === '' ? [] : input.split(','))
       if (kafkaSet.size === 0) throw new Error('At least one kafka broker must be configured')
       return [...kafkaSet]
-    })({ default: 'localhost:9092' }),
+    })({ default: ['localhost:9092'] }),
     KAFKA_READINGS_TOPIC: envalid.str({ default: 'readings' }),
     KAFKA_READINGS_NOTIFICATIONS_TOPIC: envalid.str({ default: 'reading-notifications' }),
   },
@@ -39,4 +41,4 @@ const vars = envalid.cleanEnv(
   }
 )
 
-module.exports = vars
+export default vars

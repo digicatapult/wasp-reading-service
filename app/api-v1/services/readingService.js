@@ -1,11 +1,11 @@
-const {
+import {
   findDatasetByThingIdAndId,
   findDatasetsByThingId,
   updateDataset,
   deleteDataset,
   getReadings,
   getReadingsCount,
-} = require('../../db')
+} from '../../db.js'
 
 async function getDatasetByThingIdAndId({ thingId, id }) {
   const result = await findDatasetByThingIdAndId({ thingId, id })
@@ -76,7 +76,7 @@ async function getDatasetReadingsCount({ thingId, id, ...query }) {
   }
 }
 
-module.exports = {
+export default {
   getDatasetByThingIdAndId,
   getDatasetsByThingId,
   putDataset,

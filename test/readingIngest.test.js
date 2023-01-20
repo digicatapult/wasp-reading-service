@@ -1,12 +1,12 @@
-const { describe, before, it } = require('mocha')
-const { expect } = require('chai')
+import { describe, before, it } from 'mocha'
+import { expect } from 'chai'
 
-const { setupServer } = require('./helpers/server')
-const { setupKafka, getConsumer } = require('./helpers/kafka')
-const { setupDbKafka } = require('./helpers/db')
-const { publishReadingAndWait, getReadings } = require('./helpers/readings')
-const { getDatasets } = require('./helpers/datasets')
-const { assertDatasets, assertReadings } = require('./helpers/assertions')
+import { setupServer } from './helpers/server.js'
+import { setupKafka, getConsumer } from './helpers/kafka.js'
+import { setupDbKafka } from './helpers/db.js'
+import { publishReadingAndWait, getReadings } from './helpers/readings.js'
+import { getDatasets } from './helpers/datasets.js'
+import { assertDatasets, assertReadings } from './helpers/assertions.js'
 
 const thingId = 'ee4b3481-ce8d-43a6-a8f1-8a8e2fbeb242'
 const readingTimestamp = '2021-04-07T00:00:00.000Z'

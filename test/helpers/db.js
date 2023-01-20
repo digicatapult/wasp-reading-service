@@ -1,7 +1,9 @@
-const { before, beforeEach } = require('mocha')
-const knex = require('knex')
+import { before, beforeEach } from 'mocha'
+import knex from 'knex'
 
-const { DB_HOST, DB_NAME, DB_PORT, DB_USERNAME, DB_PASSWORD } = require('../../app/env')
+import env from '../../app/env.js'
+
+const { DB_HOST, DB_NAME, DB_PORT, DB_USERNAME, DB_PASSWORD } = env
 
 const setupDb = (context) => {
   before(async function () {
@@ -29,7 +31,4 @@ const setupDbKafka = (context) => {
   })
 }
 
-module.exports = {
-  setupDb,
-  setupDbKafka,
-}
+export { setupDb, setupDbKafka }

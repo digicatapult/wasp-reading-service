@@ -1,6 +1,6 @@
-const { isUuidInvalid } = require('../../../../validatorUtil')
+import { isUuidInvalid } from '../../../../validatorUtil.js'
 
-module.exports = function (readingService) {
+export default function (readingService) {
   const doc = {
     GET: async function (req, res) {
       const { thingId } = req.params

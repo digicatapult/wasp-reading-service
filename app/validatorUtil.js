@@ -1,6 +1,8 @@
-const validator = require('validator')
-const moment = require('moment')
-const { API_OFFSET_LIMIT } = require('../app/env')
+import validator from 'validator'
+import moment from 'moment'
+import env from '../app/env.js'
+
+const { API_OFFSET_LIMIT } = env
 
 moment.suppressDeprecationWarnings = true // suppress warning on parse error, this is why we are using moment!!
 
@@ -49,8 +51,4 @@ const isPutRequestBodyInvalid = ({ type, label, unit }) => {
   }
 }
 
-module.exports = {
-  isUuidInvalid,
-  validateGetReadingsQuery,
-  isPutRequestBodyInvalid,
-}
+export { isUuidInvalid, validateGetReadingsQuery, isPutRequestBodyInvalid }

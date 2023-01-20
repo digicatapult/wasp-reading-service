@@ -1,5 +1,5 @@
-const moment = require('moment')
-const { client } = require('../app/db')
+import moment from 'moment'
+import { client } from '../app/db.js'
 
 // 1 days worth of 5 second data points = 17280
 const readingsTotal = 17280 * 1
@@ -82,7 +82,4 @@ const seed = async () => {
   }
 }
 
-module.exports = {
-  cleanup,
-  seed,
-}
+export { cleanup, seed }

@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-reading-service",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "Service for WASP",
   "main": "app/index.js",
   "type": "module",
@@ -48,7 +48,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.21.8",
     "@babel/plugin-syntax-import-assertions": "^7.20.0",
-    "c8": "^7.13.0",
+    "c8": "^7.14.0",
     "chai": "^4.3.7",
     "delay": "^6.0.0",
     "depcheck": "^1.4.3",

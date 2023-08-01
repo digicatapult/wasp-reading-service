@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-reading-service",
-  "version": "0.1.43",
+  "version": "0.1.44",
   "description": "Service for WASP",
   "main": "app/index.js",
   "type": "module",

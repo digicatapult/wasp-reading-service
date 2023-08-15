@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-reading-service",
-  "version": "0.1.52",
+  "version": "0.1.53",
   "description": "Service for WASP",
   "main": "app/index.js",
   "type": "module",
@@ -58,7 +58,7 @@
     "mocha": "^10.2.0",
     "nodemon": "^3.0.1",
     "pino-colada": "^2.2.2",
-    "prettier": "^2.8.8",
+    "prettier": "^3.0.2",
     "supertest": "^6.3.3"
   }
 }

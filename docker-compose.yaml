@@ -3,7 +3,7 @@ version: '2'
 services:
   wasp-reading-service-postgres-testing:
     container_name: wasp-reading-service-postgres-testing
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     ports:
       - 5432:5432
     environment:

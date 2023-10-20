@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-reading-service",
-  "version": "0.1.73",
+  "version": "0.1.74",
   "description": "Service for WASP",
   "main": "app/index.js",
   "type": "module",
@@ -51,7 +51,7 @@
     "c8": "^8.0.1",
     "chai": "^4.3.10",
     "delay": "^6.0.0",
-    "depcheck": "^1.4.6",
+    "depcheck": "^1.4.7",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",

@@ -1,6 +1,6 @@
 {
   "name": "@digicatapult/wasp-reading-service",
-  "version": "0.1.76",
+  "version": "0.1.77",
   "description": "Service for WASP",
   "main": "app/index.js",
   "type": "module",
@@ -41,7 +41,7 @@
     "moment": "^2.29.4",
     "pg": "^8.11.3",
     "pino": "^8.16.1",
-    "pino-http": "^8.5.0",
+    "pino-http": "^8.5.1",
     "swagger-ui-express": "^5.0.0",
     "validator": "^13.11.0"
   },
